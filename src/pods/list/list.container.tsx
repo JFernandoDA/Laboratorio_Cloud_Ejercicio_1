@@ -1,41 +1,33 @@
-import React from "react";
-import { MyContext } from "../../myContext";
-import { getMembers } from "../../service/apiService";
-import { Member } from "../../common";
-import { ListComponent } from "./list.component";
+import React from 'react';
+import * as api from './api';
+import { mapMemberListFromApiToVm } from './list.mappers';
+import { ListComponent } from './list.component';
+import { Member } from './list.vm';
 
-export const ListContainer: React.FC = () => {
-  const [members, setMembers] = React.useState<Member[]>([]);
-  const { companyName, setCompanyName } = React.useContext(MyContext);
-  let [cambio, setCambio] = React.useState(true);
+interface Props {
+  className?: string;
+}
+
+export const ListContainer: React.FunctionComponent<Props> = (props) => {
+  const { className } = props;
+  const [organization] = React.useState(process.env.ORGANIZATION);
+  const [memberList, setMemberList] = React.useState<Member[]>([]);
+
+  const handleLoadMemberList = async () => {
+    const apiMemberList = await api.getMemberList(organization);
+    const vmMemberList = mapMemberListFromApiToVm(apiMemberList);
+    setMemberList(vmMemberList);
+  };
 
   React.useEffect(() => {
-    getMembers(companyName).then(
-      json => {
-        setMembers(json);
-      },
-      error => {
-        alert(
-          `Se ha producido el siguientet error en la llamada a la API: ${error.message}`
-        );
-        console.error(
-          `Se ha producido el siguientet error en la llamada a la API: ${error.message}`
-        );
-      }
-    );
-  }, [cambio]);
-
-  const handlerCompany = value => {
-    setCompanyName(value);
-  };
+    handleLoadMemberList();
+  }, [organization]);
 
   return (
     <ListComponent
-      companyName={companyName}
-      members={members}
-      handlerCompany={handlerCompany}
-      cambio={cambio}
-      setCambio={setCambio}
+      className={className}
+      organization={organization}
+      memberList={memberList}
     />
   );
 };
