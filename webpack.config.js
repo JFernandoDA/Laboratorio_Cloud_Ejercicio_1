@@ -5,43 +5,42 @@ const basePath = __dirname;
 module.exports = {
   context: path.join(basePath, "src"),
   resolve: {
-    extensions: [".js", ".ts", ".tsx"]
+    extensions: [".js", ".ts", ".tsx"],
   },
   devtool: "eval-source-map",
   entry: {
-    app: ["./index.tsx"]
+    app: ["./index.tsx"],
   },
   stats: "errors-only",
   output: {
     filename: "[name].[chunkhash].js",
-    publicPath: "/"
   },
   devServer: {
-    historyApiFallback: true
+    historyApiFallback: true,
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        loader: "babel-loader"
+        loader: "babel-loader",
       },
       {
         test: /\.(png|jpg)$/,
         exclude: /node_modules/,
-        loader: "url-loader?limit=5000"
+        loader: "url-loader?limit=5000",
       },
       {
         test: /\.html$/,
-        loader: "html-loader"
-      }
-    ]
+        loader: "html-loader",
+      },
+    ],
   },
   plugins: [
     //Generate index.html in /dist => https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: "index.html", //Name of file in ./dist/
-      template: "index.html" //Name of template in ./src
-    })
-  ]
+      template: "index.html", //Name of template in ./src
+    }),
+  ],
 };
